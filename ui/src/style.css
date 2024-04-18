@@ -1,0 +1,6 @@
+.app-container {
+    padding: 10px;
+    background-image: url("/images/home-backgroud-ziped.png");
+    background-repeat: repeat;
+    min-height: 100vh;
+}
