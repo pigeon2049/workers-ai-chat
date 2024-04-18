@@ -47,6 +47,9 @@
 同时会在同一文件夹下生成chat.duckdb和chat.duckdb.wal文件
 迁移时将这几个文件复制走就可以了
 
+默认打包出来的是thin jar,请确保安装了maven 
+想直接打完整包请在pom里删掉spring-boot-thin-layout与spring-boot-thin-maven-plugin
+
 ## 在线体验
 
 欢迎在线体验 [https://chat.doge.icu/](https://chat.doge.icu/)
