@@ -1,8 +1,9 @@
 package icu.doge.chat.controller;
 
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import icu.doge.chat.ai.domain.ChatRecord;
 import icu.doge.chat.ai.service.IChatRecordService;
 import icu.doge.chat.bean.AjaxResult;
@@ -88,9 +89,13 @@ public class CloudfalreController {
 
         }
 
-
+        ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("messages", JSON.toJSON(contents));
+        try {
+            requestBody.put("messages",  mapper.writeValueAsString(contents));
+        } catch (JsonProcessingException e) {
+            return Flux.never();
+        }
         requestBody.put("stream", true);
 
         // 构造 assistant 的回复
@@ -119,7 +124,10 @@ public class CloudfalreController {
                                     System.out.println("[DONE]");
                                 } else {
                                     try {
-                                        allReplies.append(JSONObject.parse(data).getString("response"));
+                                        // 在处理响应的地方
+                                        JsonNode jsonNode = mapper.readTree(data);
+                                        String response = jsonNode.get("response").asText();
+                                        allReplies.append(response);
                                     }catch (Exception ignored){}
 
                                     sink.next(ServerSentEvent.<String>builder().data(data).build());

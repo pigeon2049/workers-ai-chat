@@ -1,8 +1,7 @@
 package icu.doge.chat.bean;
 
 
-
-import icu.doge.chat.constant.HttpStatus;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 
@@ -84,7 +83,7 @@ public class AjaxResult extends HashMap<String, Object> {
    * @return 成功消息
    */
   public static AjaxResult success(String msg, Object data) {
-    return new AjaxResult(HttpStatus.SUCCESS, msg, data);
+    return new AjaxResult(HttpStatus.OK.value(), msg, data);
   }
 
   /**
@@ -105,7 +104,7 @@ public class AjaxResult extends HashMap<String, Object> {
    * @return 警告消息
    */
   public static AjaxResult warn(String msg, Object data) {
-    return new AjaxResult(HttpStatus.WARN, msg, data);
+    return new AjaxResult(HttpStatus.BAD_REQUEST.value(), msg, data);
   }
 
   /**
@@ -135,7 +134,7 @@ public class AjaxResult extends HashMap<String, Object> {
    * @return 错误消息
    */
   public static AjaxResult error(String msg, Object data) {
-    return new AjaxResult(HttpStatus.ERROR, msg, data);
+    return new AjaxResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg, data);
   }
 
   /**
