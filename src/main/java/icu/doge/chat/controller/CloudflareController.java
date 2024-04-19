@@ -25,7 +25,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/ai")
-public class CloudfalreController {
+public class CloudflareController {
 
     @Value("${cloudflare.ai-url}")
     private  String url;
@@ -46,7 +46,7 @@ public class CloudfalreController {
 
     private final IChatRecordService chatRecordService;
 
-    public CloudfalreController(WebClient.Builder webClientBuilder, IChatRecordService chatRecordService, IChatRecordService chatRecordService1) {
+    public CloudflareController(WebClient.Builder webClientBuilder, IChatRecordService chatRecordService, IChatRecordService chatRecordService1) {
         this.webClientBuilder = webClientBuilder;
         this.chatRecordService = chatRecordService1;
     }
