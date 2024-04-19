@@ -1,9 +1,8 @@
 package icu.doge.chat.controller;
 
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import icu.doge.chat.ai.domain.ChatRecord;
 import icu.doge.chat.ai.service.IChatRecordService;
 import icu.doge.chat.bean.AjaxResult;
@@ -46,9 +45,9 @@ public class CloudflareController {
 
     private final IChatRecordService chatRecordService;
 
-    public CloudflareController(WebClient.Builder webClientBuilder, IChatRecordService chatRecordService, IChatRecordService chatRecordService1) {
+    public CloudflareController(WebClient.Builder webClientBuilder, IChatRecordService chatRecordService) {
         this.webClientBuilder = webClientBuilder;
-        this.chatRecordService = chatRecordService1;
+        this.chatRecordService = chatRecordService;
     }
 
     //新对话时调用 获取唯一id 前端onmount时调用
@@ -78,9 +77,7 @@ public class CloudflareController {
                 contents.addLast(new AiContent("user", content));
                 insertChatRecord("system", id, systemPrompt, null);
             }else {
-                chatRecords.forEach(s->{
-                    contents.addLast(new AiContent(s.getRole(),s.getContent()));
-                });
+                chatRecords.forEach(s-> contents.addLast(new AiContent(s.getRole(),s.getContent())));
                 contents.addLast(new AiContent("user", content));
             }
 
@@ -89,13 +86,8 @@ public class CloudflareController {
 
         }
 
-        ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> requestBody = new HashMap<>();
-        try {
-            requestBody.put("messages",  mapper.writeValueAsString(contents));
-        } catch (JsonProcessingException e) {
-            return Flux.never();
-        }
+        requestBody.put("messages", JSON.toJSON(contents));
         requestBody.put("stream", true);
 
         // 构造 assistant 的回复
@@ -123,11 +115,9 @@ public class CloudflareController {
 
                                     System.out.println("[DONE]");
                                 } else {
+
                                     try {
-                                        // 在处理响应的地方
-                                        JsonNode jsonNode = mapper.readTree(data);
-                                        String response = jsonNode.get("response").asText();
-                                        allReplies.append(response);
+                                        allReplies.append(JSONObject.parse(data).getString("response"));
                                     }catch (Exception ignored){}
 
                                     sink.next(ServerSentEvent.<String>builder().data(data).build());
